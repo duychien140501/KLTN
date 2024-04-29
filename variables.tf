@@ -35,5 +35,4 @@ variable "database-subnet-cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
   default     = ["172.20.7.0/24"]
-
 }

@@ -75,3 +75,45 @@ resource "aws_lb" "fe-alb" {
 
   depends_on = [aws_security_group.fe-alb-sg]
 }
+
+# create target group
+resource "aws_lb_target_group" "frontend-tg" {
+  name     = "frontend-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = var.vpc-id
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 10
+    matcher             = 200
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 5
+    unhealthy_threshold = 2
+  }
+
+}
+
+# create target attachment
+resource "aws_lb_target_group_attachment" "attach-frontend" {
+  count            = length(aws_instance.frontend)
+  target_group_arn = aws_lb_target_group.frontend-tg.arn
+  target_id        = aws_instance.frontend[count.index].id
+  port             = 80
+}
+
+# create listener
+resource "aws_lb_listener" "fe_listener" {
+  load_balancer_arn = aws_lb.fe-alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend-tg.arn
+  }
+
+  depends_on = [aws_lb.fe-alb, aws_lb_target_group.frontend-tg]
+}

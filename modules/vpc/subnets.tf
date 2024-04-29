@@ -1,6 +1,4 @@
-data "aws_availability_zones" "available" {
-
-}
+data "aws_availability_zones" "available" { }
 
 # Public subnet
 resource "aws_subnet" "public_subnet" {
@@ -11,7 +9,7 @@ resource "aws_subnet" "public_subnet" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
   tags = {
-    Name        = "public subnet ${count.index + 1} created by terraform",
+    Name        = "public subnet ${count.index + 1}",
     Description = "public subnet for shopizer"
   }
 
@@ -27,7 +25,7 @@ resource "aws_subnet" "frontend_subnet" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name        = "frontend subnet ${count.index + 1} created by terraform",
+    Name        = "frontend subnet ${count.index + 1}",
     Description = "frontend subnet for shopizer"
   }
 
@@ -43,7 +41,7 @@ resource "aws_subnet" "backend_subnet" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name        = "backend subnet ${count.index + 1} created by terraform",
+    Name        = "backend subnet ${count.index + 1}",
     Description = "backend subnet for shopizer"
   }
 
@@ -59,7 +57,7 @@ resource "aws_subnet" "database_subnet" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name        = "database subnet ${count.index + 1} created by terraform",
+    Name        = "database subnet ${count.index + 1}",
     Description = "database subnet for shopizer"
   }
 
