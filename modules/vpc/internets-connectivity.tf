@@ -29,7 +29,7 @@ resource "aws_network_interface" "network_interface" {
 resource "aws_instance" "nat_instance" {
   count         = length(var.public-subnet-cidrs)
   ami           = var.nat-ami
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
   key_name      = var.ssh-key-name
   network_interface {
     network_interface_id = aws_network_interface.network_interface[count.index].id

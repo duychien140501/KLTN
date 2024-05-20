@@ -13,13 +13,11 @@ variable "ubuntu-ami" {
 }
 
 variable "ssh-key-name" {
-  type    = string
-  default = "duychien.ng"
+  type = string
 }
 
 variable "private-ip" {
-  type    = string
-  default = "172.20.7.47"
+  type = string
 }
 
 variable "database-subnet-ids" {
@@ -27,8 +25,7 @@ variable "database-subnet-ids" {
 }
 
 variable "default-name" {
-  type    = string
-  default = "shopizer"
+  type = string
 }
 
 variable "nat-sg-id" {
@@ -41,4 +38,8 @@ variable "bastion-sg-id" {
 
 variable "backend-subnet-cidrs" {
   type = list(string)
+}
+
+variable "instance_type" {
+  type = string
 }

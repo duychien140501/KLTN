@@ -3,7 +3,6 @@ resource "aws_security_group" "frontend-sg" {
   name        = "Frontend-SG"
   description = "Security Group for Frontend created by terraform"
   vpc_id      = var.vpc-id
-
   ingress = [
     {
       description      = "allow Bastion SSH"
@@ -71,7 +70,7 @@ resource "aws_cloudwatch_log_group" "fe-log-group" {
 resource "aws_instance" "frontend" {
   count                  = length(var.frontend-subnet-ids)
   ami                    = var.ubuntu-ami
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   key_name               = var.ssh-key-name
   subnet_id              = var.frontend-subnet-ids[count.index]
   vpc_security_group_ids = [aws_security_group.frontend-sg.id]

@@ -11,8 +11,7 @@ variable "backend-subnet-ids" {
 }
 
 variable "default-name" {
-  type    = string
-  default = "shopizer"
+  type = string
 }
 
 variable "internet-cidr" {
@@ -22,8 +21,7 @@ variable "internet-cidr" {
 }
 
 variable "ssh-key-name" {
-  type    = string
-  default = "duychien.ng"
+  type = string
 }
 
 variable "ubuntu-ami" {
@@ -31,8 +29,7 @@ variable "ubuntu-ami" {
 }
 
 variable "default-ssh-port" {
-  type    = string
-  default = "2222"
+  type = string
 }
 
 variable "nat-sg-id" {
@@ -54,4 +51,8 @@ variable "backend-subnet-cidrs" {
 variable "cloudwatch_instance_profile_name" {
   description = "Name of the CloudWatch IAM instance profile"
   type        = string
+}
+
+variable "instance_type" {
+  type = string
 }

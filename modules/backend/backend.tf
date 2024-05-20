@@ -82,7 +82,7 @@ resource "aws_cloudwatch_log_group" "be-log-group" {
 resource "aws_instance" "backend" {
   count                  = length(var.backend-subnet-ids)
   ami                    = var.ubuntu-ami
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   key_name               = var.ssh-key-name
   subnet_id              = var.backend-subnet-ids[count.index]
   vpc_security_group_ids = [aws_security_group.backend-sg.id]
