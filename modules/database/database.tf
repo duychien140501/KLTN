@@ -72,7 +72,7 @@ resource "aws_network_interface" "database-ni" {
 
 resource "aws_instance" "database-instance" {
   ami           = var.ubuntu-ami
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
   key_name      = var.ssh-key-name
   user_data     = file("${path.module}/dbinstance.sh")
 

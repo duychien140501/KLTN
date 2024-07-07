@@ -1,4 +1,4 @@
-data "aws_availability_zones" "available" { }
+data "aws_availability_zones" "available" {}
 
 # Public subnet
 resource "aws_subnet" "public_subnet" {

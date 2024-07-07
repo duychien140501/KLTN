@@ -70,7 +70,7 @@ resource "aws_cloudwatch_log_group" "adm-log-group" {
 resource "aws_instance" "admin" {
   count                  = length(var.frontend-subnet-ids)
   ami                    = var.ubuntu-ami
-  instance_type          = "t2.micro"
+  instance_type          = var.instance_type
   key_name               = var.ssh-key-name
   subnet_id              = var.frontend-subnet-ids[count.index]
   vpc_security_group_ids = [aws_security_group.admin-sg.id]

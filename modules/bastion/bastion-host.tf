@@ -40,7 +40,7 @@ resource "aws_security_group" "bastion-sg" {
 
 resource "aws_instance" "bastion-host" {
   ami                         = var.ubuntu-ami
-  instance_type               = "t2.micro"
+  instance_type               = var.instance_type
   key_name                    = var.ssh-key-name
   subnet_id                   = var.public-subnet-ids[0]           # first public subnet
   vpc_security_group_ids      = [aws_security_group.bastion-sg.id] # vpc_security_group_ids cho pb > 0.12

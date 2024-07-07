@@ -13,12 +13,11 @@ variable "ubuntu-ami" {
 }
 
 variable "ssh-key-name" {
-  type    = string
-  default = "duychien.ng"
+  type = string
 }
 
 variable "default-name" {
-  type    = string
+  type = string
 }
 
 variable "public-subnet-ids" {
@@ -28,5 +27,8 @@ variable "public-subnet-ids" {
 variable "vpc-cidr" {
   description = "VPC CIDR"
   type        = string
-  default     = "172.20.0.0/16"
+}
+
+variable "instance_type" {
+  type = string
 }
