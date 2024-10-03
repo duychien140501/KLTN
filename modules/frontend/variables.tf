@@ -10,10 +10,6 @@ variable "frontend-subnet-ids" {
   type = list(string)
 }
 
-variable "default-name" {
-  type = string
-}
-
 variable "internet-cidr" {
   description = "cidr block for internet"
   type        = string
@@ -28,15 +24,7 @@ variable "ubuntu-ami" {
   type = string
 }
 
-variable "default-ssh-port" {
-  type = string
-}
-
 variable "alb-be-dns" {
-  type = string
-}
-
-variable "nat-sg-id" {
   type = string
 }
 

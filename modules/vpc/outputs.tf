@@ -18,9 +18,18 @@ output "database-subnet-ids" {
   value = [for subnet in aws_subnet.database_subnet : subnet.id]
 }
 
-output "nat-sg-id" {
-  value = aws_security_group.nat-sg.id
+output "logstash-subnet-id" {
+  value = aws_subnet.logstash_subnet.id
 }
+
+output "elasticsearch-subnet-id" {
+  value = aws_subnet.elasticsearch_subnet.id
+}
+
+output "kibana-subnet-id" {
+  value = aws_subnet.kibana_subnet.id
+}
+
 
 output "backend-subnet-cidrs" {
   value = var.backend-subnet-cidrs
@@ -28,4 +37,16 @@ output "backend-subnet-cidrs" {
 
 output "frontend-subnet-cidrs" {
   value = var.frontend-subnet-cidrs
+}
+
+output "logstash-subnet-cidrs" {
+  value = var.logstash-subnet-cidrs
+}
+
+output "elasticsearch-subnet-cidrs" {
+  value = var.elasticsearch-subnet-cidrs
+}
+
+output "kibana-subnet-cidrs" {
+  value = var.kibana-subnet-cidrs
 }

@@ -8,11 +8,6 @@ variable "public-subnet-cidrs" {
   type        = list(string)
 }
 
-variable "nat-ami" {
-  description = "ami to create nat instance"
-  type        = string
-}
-
 variable "internet-cidr" {
   description = "cidr block for internet"
   type        = string
@@ -36,6 +31,21 @@ variable "backend-subnet-cidrs" {
 variable "database-subnet-cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
+}
+
+variable "logstash-subnet-cidrs" {
+  description = "Subnet for logstash"
+  type        = string
+}
+
+variable "elasticsearch-subnet-cidrs" {
+  description = "Subnet for elasticsearch"
+  type        = string
+}
+
+variable "kibana-subnet-cidrs" {
+  description = "Subnet for kibana"
+  type        = string
 }
 
 variable "instance_type" {

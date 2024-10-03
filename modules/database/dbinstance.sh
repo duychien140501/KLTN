@@ -1,19 +1,5 @@
 #!/bin/bash
 
-# Change default username
-echo "Change default username"
-user=${var.default-name}
-usermod  -l $user ubuntu
-groupmod -n $user ubuntu
-usermod  -d /home/$user -m $user
-if [ -f /etc/sudoers.d/90-cloudimg-ubuntu ]; then
-mv /etc/sudoers.d/90-cloudimg-ubuntu /etc/sudoers.d/90-cloud-init-users
-fi
-perl -pi -e "s/ubuntu/$user/g;" /etc/sudoers.d/90-cloud-init-users
-
-# Change default port
-echo "Change default port"
-sudo perl -pi -e 's/^#?Port 22$/Port 2222/' /etc/ssh/sshd_config service
 sudo systemctl restart sshd
 
 # Install mysql
@@ -35,7 +21,7 @@ rm mysql-apt-config_0.8.15-1_all.deb
 # create database, username, password
 sudo mysql -u root -p"root" -e "CREATE USER 'shopizer'@'%' IDENTIFIED BY 'shopizer';"
 sudo mysql -u root -p"root" -e "CREATE DATABASE SALESMANAGER;"
-sudo mysql -u root -p"root" -e "GRANT ALL PRIVILEGES ON SALESMANAGER.* TO 'shopizer'@'%';"
+sudo mysql -u root -p"root" -e "GRANT ALL PRIVILEGES ON *.* TO 'shopizer'@'%';"
 sudo mysql -u root -p"root" -e "FLUSH PRIVILEGES;"
 
 # allow remote access

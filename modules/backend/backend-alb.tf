@@ -63,12 +63,12 @@ resource "aws_lb_target_group" "backend-tg" {
   health_check {
     enabled             = true
     healthy_threshold   = 3
-    interval            = 10
+    interval            = 30
     matcher             = 200
     path                = "/"
     port                = "traffic-port"
     protocol            = "HTTP"
-    timeout             = 5
+    timeout             = 16
     unhealthy_threshold = 2
   }
 

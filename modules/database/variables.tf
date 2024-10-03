@@ -24,14 +24,6 @@ variable "database-subnet-ids" {
   type = list(string)
 }
 
-variable "default-name" {
-  type = string
-}
-
-variable "nat-sg-id" {
-  type = string
-}
-
 variable "bastion-sg-id" {
   type = string
 }

@@ -63,3 +63,45 @@ resource "aws_subnet" "database_subnet" {
 
   depends_on = [aws_vpc.shopzer-vpc]
 }
+
+# logstash subnet
+resource "aws_subnet" "logstash_subnet" {
+  vpc_id            = aws_vpc.shopzer-vpc.id
+  cidr_block        = var.logstash-subnet-cidrs
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  tags = {
+    Name        = "logstash subnet",
+    Description = "logstash subnet for shopizer"
+  }
+
+  depends_on = [aws_vpc.shopzer-vpc]
+}
+
+# elasticsearch subnet
+resource "aws_subnet" "elasticsearch_subnet" {
+  vpc_id            = aws_vpc.shopzer-vpc.id
+  cidr_block        = var.elasticsearch-subnet-cidrs
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  tags = {
+    Name        = "elasticsearch subnet",
+    Description = "elasticsearch subnet for shopizer"
+  }
+
+  depends_on = [aws_vpc.shopzer-vpc]
+}
+
+# kibana subnet
+resource "aws_subnet" "kibana_subnet" {
+  vpc_id            = aws_vpc.shopzer-vpc.id
+  cidr_block        = var.kibana-subnet-cidrs
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  tags = {
+    Name        = "kibana subnet",
+    Description = "kibana subnet for shopizer"
+  }
+
+  depends_on = [aws_vpc.shopzer-vpc]
+}

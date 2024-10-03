@@ -18,8 +18,8 @@ resource "aws_security_group" "backend-sg" {
     },
     {
       description      = "Allow Bastion SSH"
-      from_port        = 2222
-      to_port          = 2222
+      from_port        = 22
+      to_port          = 22
       protocol         = "tcp"
       cidr_blocks      = []
       ipv6_cidr_blocks = []
@@ -35,10 +35,10 @@ resource "aws_security_group" "backend-sg" {
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
-      cidr_blocks      = []
+      cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [var.nat-sg-id]
+      security_groups  = []
       self             = false
     },
     {
@@ -46,10 +46,10 @@ resource "aws_security_group" "backend-sg" {
       from_port        = 443
       to_port          = 443
       protocol         = "tcp"
-      cidr_blocks      = []
+      cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [var.nat-sg-id]
+      security_groups  = []
       self             = false
     },
     {

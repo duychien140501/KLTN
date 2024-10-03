@@ -16,10 +16,6 @@ variable "ssh-key-name" {
   type = string
 }
 
-variable "default-name" {
-  type = string
-}
-
 variable "public-subnet-ids" {
   type = list(string)
 }

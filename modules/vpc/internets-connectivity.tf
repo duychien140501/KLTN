@@ -11,36 +11,56 @@ resource "aws_internet_gateway" "main-igw" {
 }
 
 # Network interface
-resource "aws_network_interface" "network_interface" {
-  count             = length(var.public-subnet-cidrs)
-  subnet_id         = aws_subnet.public_subnet[count.index].id
-  security_groups   = [aws_security_group.nat-sg.id]
-  source_dest_check = false
+# resource "aws_network_interface" "network_interface" {
+#   count             = length(var.public-subnet-cidrs)
+#   subnet_id         = aws_subnet.public_subnet[count.index].id
+#   security_groups   = [aws_security_group.nat-sg.id]
+#   source_dest_check = false
+
+#   tags = {
+#     Name        = "nat_instance_network_interface ${count.index + 1}"
+#     Description = "network interface to create nat instance"
+#   }
+
+#   depends_on = [aws_subnet.public_subnet, aws_security_group.nat-sg]
+# }
+
+# # NAT instance
+# resource "aws_instance" "nat_instance" {
+#   count         = length(var.public-subnet-cidrs)
+#   ami           = var.nat-ami
+#   instance_type = var.instance_type
+#   key_name      = var.ssh-key-name
+#   network_interface {
+#     network_interface_id = aws_network_interface.network_interface[count.index].id
+#     device_index         = 0
+#   }
+
+#   tags = {
+#     Name        = "NAT instance ${count.index + 1}"
+#     Description = ""
+#   }
+
+#   depends_on = [aws_network_interface.network_interface]
+
+# }
+
+resource "aws_eip" "nat_eip" {
+  count = length(var.public-subnet-cidrs)
+  domain = "vpc"
 
   tags = {
-    Name        = "nat_instance_network_interface ${count.index + 1}"
-    Description = "network interface to create nat instance"
+    Name        = "nat_eip ${count.index + 1}"
   }
-
-  depends_on = [aws_subnet.public_subnet, aws_security_group.nat-sg]
 }
 
-# NAT instance
-resource "aws_instance" "nat_instance" {
-  count         = length(var.public-subnet-cidrs)
-  ami           = var.nat-ami
-  instance_type = var.instance_type
-  key_name      = var.ssh-key-name
-  network_interface {
-    network_interface_id = aws_network_interface.network_interface[count.index].id
-    device_index         = 0
-  }
+resource "aws_nat_gateway" "nat_gateway" {
+  count     = length(var.public-subnet-cidrs)
+  subnet_id = aws_subnet.public_subnet[count.index].id
+  allocation_id = aws_eip.nat_eip[count.index].id
 
   tags = {
-    Name        = "NAT instance ${count.index + 1}"
-    Description = ""
+    Name        = "nat_gateway ${count.index + 1}"
+    Description = "nat gateway for shopizer"
   }
-
-  depends_on = [aws_network_interface.network_interface]
-
 }

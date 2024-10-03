@@ -4,14 +4,6 @@ variable "aws-region" {
   type        = string
 }
 
-variable "default-name" {
-  type = string
-}
-
-variable "nat-ami" {
-  type = string
-}
-
 variable "private-ip" {
   type = string
 }
@@ -49,8 +41,19 @@ variable "database-subnet-cidrs" {
   type        = list(string)
 }
 
-variable "default-ssh-port" {
-  type = string
+variable "logstash-subnet-cidrs" {
+  description = "Subnet for logstash"
+  type        = string
+}
+
+variable "elasticsearch-subnet-cidrs" {
+  description = "Subnet for elasticsearch"
+  type        = string
+}
+
+variable "kibana-subnet-cidrs" {
+  description = "Subnet for kibana"
+  type        = string
 }
 
 variable "instance_type" {

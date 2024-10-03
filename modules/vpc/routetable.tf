@@ -9,6 +9,11 @@ resource "aws_route_table" "public_route_table" {
     gateway_id = aws_internet_gateway.main-igw.id
   }
 
+  route {
+    cidr_block           = aws_vpc.shopzer-vpc.cidr_block
+     gateway_id          = "local"
+  }
+
   tags = {
     Name        = "Public Route Table"
     Description = "Route table "
@@ -19,19 +24,23 @@ resource "aws_route_table" "public_route_table" {
 
 # Private route table
 resource "aws_route_table" "private_route_table" {
-  count  = length(aws_network_interface.network_interface)
+  count  = length(aws_nat_gateway.nat_gateway)
   vpc_id = aws_vpc.shopzer-vpc.id
 
   route {
     cidr_block           = "0.0.0.0/0"
-    network_interface_id = aws_network_interface.network_interface[count.index].id
+    gateway_id           = aws_nat_gateway.nat_gateway[count.index].id
+  }
+
+  route {
+    cidr_block           = aws_vpc.shopzer-vpc.cidr_block
+     gateway_id          = "local"
   }
 
   tags = {
     Name        = "Private Route Table"
     Description = "Route table "
   }
-  depends_on = [aws_network_interface.network_interface]
 }
 
 # Route Table Association
