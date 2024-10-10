@@ -1,8 +1,8 @@
 # Bastion SG
-resource "aws_security_group" "database-sg" {
-  name        = "Database-SG"
+resource "aws_security_group" "database_sg" {
+  name        = "Database_SG"
   description = "Security Group for Database created by terraform"
-  vpc_id      = var.vpc-id
+  vpc_id      = var.vpc_id
 
   ingress = [
     {
@@ -10,7 +10,7 @@ resource "aws_security_group" "database-sg" {
       from_port        = 3306
       to_port          = 3306
       protocol         = "tcp"
-      cidr_blocks      = var.backend-subnet-cidrs
+      cidr_blocks      = var.backend_subnet_cidrs
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -24,7 +24,7 @@ resource "aws_security_group" "database-sg" {
       cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [var.bastion-sg-id]
+      security_groups  = [var.bastion_sg_id]
       self             = false
     }
   ]
@@ -60,25 +60,25 @@ resource "aws_security_group" "database-sg" {
   }
 }
 
-resource "aws_network_interface" "database-ni" {
-  subnet_id       = var.database-subnet-ids[0]
-  private_ips     = [var.private-ip]
-  security_groups = [aws_security_group.database-sg.id]
+resource "aws_network_interface" "database_ni" {
+  subnet_id       = var.database_subnet_ids[0]
+  private_ips     = [var.private_ip]
+  security_groups = [aws_security_group.database_sg.id]
   tags = {
-    Name        = "db-ni"
+    Name        = "db_ni"
     Description = "network interface for database instance"
   }
 }
 
-resource "aws_instance" "database-instance" {
-  ami           = var.ubuntu-ami
-  instance_type = var.instance_type
-  key_name      = var.ssh-key-name
+resource "aws_instance" "database_instance" {
+  ami                  = var.ubuntu_ami
+  instance_type        = var.instance_type
+  key_name             = var.ssh_key_name
   iam_instance_profile = aws_iam_instance_profile.backup.name
-  user_data     = file("${path.module}/dbinstance.sh")
+  user_data            = file("${path.module}/dbinstance.sh")
 
   network_interface {
-    network_interface_id = aws_network_interface.database-ni.id
+    network_interface_id = aws_network_interface.database_ni.id
     device_index         = 0
   }
 
@@ -86,7 +86,7 @@ resource "aws_instance" "database-instance" {
     Name = "Database instance creating by terraform"
   }
 
-  depends_on = [aws_security_group.database-sg, aws_network_interface.database-ni]
+  depends_on = [aws_security_group.database_sg, aws_network_interface.database_ni]
 }
 
 # Create an S3 bucket

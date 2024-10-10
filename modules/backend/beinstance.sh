@@ -27,7 +27,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo service docker start
 sudo groupadd docker
 sudo usermod -aG docker $USER
-sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
+sudo chown "$USER":"$USER" /home/"$USER"/.docker -R 
 sudo chmod g+rwx "$HOME/.docker" -R
 sudo newgrp docker
 sudo systemctl enable docker.service

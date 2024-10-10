@@ -2,16 +2,16 @@
 # Public route table
 resource "aws_route_table" "public_route_table" {
 
-  vpc_id = aws_vpc.shopzer-vpc.id
+  vpc_id = aws_vpc.shopzer_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main-igw.id
+    gateway_id = aws_internet_gateway.main_igw.id
   }
 
   route {
-    cidr_block           = aws_vpc.shopzer-vpc.cidr_block
-     gateway_id          = "local"
+    cidr_block = aws_vpc.shopzer_vpc.cidr_block
+    gateway_id = "local"
   }
 
   tags = {
@@ -19,22 +19,22 @@ resource "aws_route_table" "public_route_table" {
     Description = "Route table "
   }
 
-  depends_on = [aws_vpc.shopzer-vpc, aws_internet_gateway.main-igw]
+  depends_on = [aws_vpc.shopzer_vpc, aws_internet_gateway.main_igw]
 }
 
 # Private route table
 resource "aws_route_table" "private_route_table" {
   count  = length(aws_nat_gateway.nat_gateway)
-  vpc_id = aws_vpc.shopzer-vpc.id
+  vpc_id = aws_vpc.shopzer_vpc.id
 
   route {
-    cidr_block           = "0.0.0.0/0"
-    gateway_id           = aws_nat_gateway.nat_gateway[count.index].id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gateway[count.index].id
   }
 
   route {
-    cidr_block           = aws_vpc.shopzer-vpc.cidr_block
-     gateway_id          = "local"
+    cidr_block = aws_vpc.shopzer_vpc.cidr_block
+    gateway_id = "local"
   }
 
   tags = {
@@ -78,4 +78,11 @@ resource "aws_route_table_association" "route_database_subnet" {
   route_table_id = aws_route_table.private_route_table[count.index].id
 
   depends_on = [aws_route_table.private_route_table, aws_subnet.database_subnet]
+}
+
+resource "aws_route_table_association" "route_logging_subnet" {
+  subnet_id      = aws_subnet.logging_subnet.id
+  route_table_id = aws_route_table.public_route_table.id
+
+  depends_on = [aws_route_table.public_route_table, aws_subnet.logging_subnet]
 }

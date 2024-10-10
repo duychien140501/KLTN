@@ -27,10 +27,11 @@ sudo systemctl enable containerd.service
 sudo service docker restart
 
 sudo mkdir -p /var/log/nginx
+docker pull duychien1405/shopizer-fe:1.2
 
 sudo docker run -d --restart always \
--e "APP_MERCHANT=DEFAULT" \
--e "APP_BASE_URL=http://${var.alb-be-dns}:8080" \
+-e APP_MERCHANT=DEFAULT \
+-e APP_BASE_URL=http://${var.alb-be-dns}:8080 \
 -p 80:80 \
 -v /var/log/nginx:/var/log/nginx \
 --name shopizer_shop \

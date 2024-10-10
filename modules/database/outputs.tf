@@ -1,7 +1,7 @@
-output "database-ip" {
-  value = var.private-ip
+output "database_ip" {
+  value = var.private_ip
 }
 
-output "database-sg-id" {
-  value = aws_security_group.database-sg.id
+output "database_sg_id" {
+  value = aws_security_group.database_sg.id
 }

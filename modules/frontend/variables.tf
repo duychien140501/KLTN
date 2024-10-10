@@ -1,38 +1,38 @@
-variable "vpc-id" {
+variable "vpc_id" {
   type = string
 }
 
-variable "public-subnet-ids" {
+variable "public_subnet_ids" {
   type = list(string)
 }
 
-variable "frontend-subnet-ids" {
+variable "frontend_subnet_ids" {
   type = list(string)
 }
 
-variable "internet-cidr" {
+variable "internet_cidr" {
   description = "cidr block for internet"
   type        = string
   default     = "0.0.0.0/0"
 }
 
-variable "ssh-key-name" {
+variable "ssh_key_name" {
   type = string
 }
 
-variable "ubuntu-ami" {
+variable "ubuntu_ami" {
   type = string
 }
 
-variable "alb-be-dns" {
+variable "alb_be_dns" {
   type = string
 }
 
-variable "bastion-sg-id" {
+variable "bastion_sg_id" {
   type = string
 }
 
-variable "frontend-subnet-cidrs" {
+variable "frontend_subnet_cidrs" {
   type = list(string)
 }
 

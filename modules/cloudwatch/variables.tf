@@ -9,3 +9,8 @@ variable "admin_instance_ids" {
 variable "backend_instance_ids" {
   type = list(string)
 }
+
+variable "region" {
+  type    = string
+  default = "ap-southeast-1"
+}

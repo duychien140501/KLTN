@@ -1,4 +1,5 @@
 #!/bin/bash
+dns=${var.alb-be-dns}
 
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
@@ -27,9 +28,10 @@ sudo systemctl enable containerd.service
 sudo service docker restart
 
 sudo mkdir -p /var/log/nginx
+docker pull duychien1405/shopizer-fe-admin:1.3
 
 sudo docker run -d  --restart always \
--e "APP_BASE_URL=http://$dns:8080"  \
+-e APP_BASE_URL=http://backend-alb-1458655565.ap-southeast-1.elb.amazonaws.com:8080  \
 -p 82:80 -v /var/log/nginx:/var/log/nginx  \
 --name shopizer_admin \
 duychien1405/shopizer-fe-admin:1.3

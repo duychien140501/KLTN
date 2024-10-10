@@ -1,8 +1,8 @@
 # Bastion SG
-resource "aws_security_group" "bastion-sg" {
-  name        = "Bastion-Host-SG"
+resource "aws_security_group" "bastion_sg" {
+  name        = "Bastion_Host_SG"
   description = "Security Group for Bastion host created by terraform"
-  vpc_id      = var.vpc-id
+  vpc_id      = var.vpc_id
 
   ingress = [
     {
@@ -10,7 +10,7 @@ resource "aws_security_group" "bastion-sg" {
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
-      cidr_blocks      = [var.internet-cidr]
+      cidr_blocks      = [var.internet_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -24,7 +24,7 @@ resource "aws_security_group" "bastion-sg" {
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
-      cidr_blocks      = [var.vpc-cidr]
+      cidr_blocks      = [var.vpc_cidr]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -48,12 +48,12 @@ resource "aws_security_group" "bastion-sg" {
   }
 }
 
-resource "aws_instance" "bastion-host" {
-  ami                         = var.ubuntu-ami
+resource "aws_instance" "bastion_host" {
+  ami                         = var.ubuntu_ami
   instance_type               = var.instance_type
-  key_name                    = var.ssh-key-name
-  subnet_id                   = var.public-subnet-ids[0]           # first public subnet
-  vpc_security_group_ids      = [aws_security_group.bastion-sg.id] # vpc_security_group_ids cho pb > 0.12
+  key_name                    = var.ssh_key_name
+  subnet_id                   = var.public_subnet_ids[0]           # first public subnet
+  vpc_security_group_ids      = [aws_security_group.bastion_sg.id] # vpc_security_group_ids cho pb > 0.12
   associate_public_ip_address = true
 
   user_data = file("${path.module}/bastioninstance.sh")
@@ -62,5 +62,5 @@ resource "aws_instance" "bastion-host" {
     Name = "Bastion host creating by terraform"
   }
 
-  depends_on = [aws_security_group.bastion-sg]
+  depends_on = [aws_security_group.bastion_sg]
 }

@@ -1,43 +1,36 @@
-# variable "vpc-cidr" {
-#   type = string
-# }
+variable "vpc_cidr" {
+  type = string
+}
 
-# variable "public-subnet-cidrs" {
-#   type = list(string)
-# }
+variable "vpc_id" {
+  type = string
+}
 
-# variable "frontend-subnet-cidrs" {
-#   type = list(string)
-# }
+variable "logging_private_ip" {
+  type = string
+}
 
-# variable "backend-subnet-cidrs" {
-#   type = list(string)
-# }
+variable "ssh_key_name" {
+  type = string
+}
 
-# variable "database-subnet-cidrs" {
-#   type = list(string)
-# }
+variable "ubuntu_ami" {
+  type = string
+}
 
-# variable "ssh-key-name" {
-#   type = string
-# }
+variable "instance_type" {
+  type = string
+  default = "t2.medium"
+}
 
-# variable "nat-ami" {
-#   type = string
-# }
+variable "logging_subnet_cidrs" {
+  type = string
+}
 
-# variable "instance_type" {
-#   type = string
-# }
+variable "bastion_sg_id" {
+  type = string
+}
 
-# variable "logstash-subnet-cidrs" {
-#   type = string
-# }
-
-# variable "elasticsearch-subnet-cidrs" {
-#   type = string
-# }
-
-# variable "kibana-subnet-cidrs" {
-#   type = string
-# }
+variable "logging_subnet_id" {
+  type = string
+}

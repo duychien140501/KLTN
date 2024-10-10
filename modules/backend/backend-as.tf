@@ -1,10 +1,10 @@
 # Launch Template for Backend Instances
 resource "aws_launch_template" "backend" {
-  name_prefix            = "backend-template-"
-  image_id               = var.ubuntu-ami
+  name_prefix            = "backend_template_"
+  image_id               = var.ubuntu_ami
   instance_type          = var.instance_type
-  key_name               = var.ssh-key-name
-  vpc_security_group_ids = [aws_security_group.backend-sg.id]
+  key_name               = var.ssh_key_name
+  vpc_security_group_ids = [aws_security_group.backend_sg.id]
 
 }
 
@@ -13,7 +13,7 @@ resource "aws_autoscaling_group" "backend" {
   desired_capacity    = 0
   max_size            = 2
   min_size            = 0
-  vpc_zone_identifier = var.backend-subnet-ids
+  vpc_zone_identifier = var.backend_subnet_ids
   launch_template {
     id      = aws_launch_template.backend.id
     version = "$Latest"
@@ -27,7 +27,7 @@ resource "aws_autoscaling_group" "backend" {
 
 # Auto Scaling Policy for Scaling Up
 resource "aws_autoscaling_policy" "backend_scale_up" {
-  name                   = "backend-scale-up"
+  name                   = "backend_scale_up"
   scaling_adjustment     = 1
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 300
@@ -36,7 +36,7 @@ resource "aws_autoscaling_policy" "backend_scale_up" {
 
 # Auto Scaling Policy for Scaling Down
 resource "aws_autoscaling_policy" "backend_scale_down" {
-  name                   = "backend-scale-down"
+  name                   = "backend_scale_down"
   scaling_adjustment     = -1
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 300
@@ -45,7 +45,7 @@ resource "aws_autoscaling_policy" "backend_scale_down" {
 
 # CloudWatch Metric Alarm for Scaling Up
 resource "aws_cloudwatch_metric_alarm" "backend_high_cpu" {
-  alarm_name          = "high-cpu-backend"
+  alarm_name          = "high_cpu_backend"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
@@ -62,7 +62,7 @@ resource "aws_cloudwatch_metric_alarm" "backend_high_cpu" {
 
 # CloudWatch Metric Alarm for Scaling Down
 resource "aws_cloudwatch_metric_alarm" "backend_low_cpu" {
-  alarm_name          = "low-cpu-backend"
+  alarm_name          = "low_cpu_backend"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
