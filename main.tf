@@ -1,35 +1,47 @@
 provider "aws" {
-  region = var.aws-region
+  region = var.aws_region
 }
 
 # VPC module
 module "vpc" {
   source                = "./modules/vpc"
-  vpc-cidr              = var.vpc-cidr
-  public-subnet-cidrs   = var.public-subnet-cidrs
-  frontend-subnet-cidrs = var.frontend-subnet-cidrs
-  backend-subnet-cidrs  = var.backend-subnet-cidrs
-  database-subnet-cidrs = var.database-subnet-cidrs
-  ssh-key-name          = var.ssh-key-name
-  nat-ami               = var.nat-ami
+  vpc_cidr              = var.vpc_cidr
+  public_subnet_cidrs   = var.public_subnet_cidrs
+  frontend_subnet_cidrs = var.frontend_subnet_cidrs
+  backend_subnet_cidrs  = var.backend_subnet_cidrs
+  database_subnet_cidrs = var.database_subnet_cidrs
+  logging_subnet_cidrs  = var.logging_subnet_cidrs
+  ssh_key_name          = var.ssh_key_name
   instance_type         = var.instance_type
+}
+
+# Logging module
+module "logging" {
+  source               = "./modules/logging"
+  vpc_id               = module.vpc.vpc_id
+  vpc_cidr             = var.vpc_cidr
+  logging_private_ip   = var.logging_private_ip
+  logging_subnet_cidrs = var.logging_subnet_cidrs
+  bastion_sg_id        = module.bastion.bastion_sg_id
+  ssh_key_name         = var.ssh_key_name
+  ubuntu_ami           = var.ubuntu_ami
+  logging_subnet_id    = module.vpc.logging_subnet_id
 }
 
 # Bastion module
 module "bastion" {
   source            = "./modules/bastion"
-  default-name      = var.default-name
-  vpc-id            = module.vpc.vpc-id
-  public-subnet-ids = module.vpc.public-subnet-ids
-  ubuntu-ami        = var.ubuntu-ami
-  ssh-key-name      = var.ssh-key-name
-  vpc-cidr          = var.vpc-cidr
+  vpc_id            = module.vpc.vpc_id
+  public_subnet_ids = module.vpc.public_subnet_ids
+  ubuntu_ami        = var.ubuntu_ami
+  ssh_key_name      = var.ssh_key_name
+  vpc_cidr          = var.vpc_cidr
   instance_type     = var.instance_type
 
   depends_on = [module.vpc]
 }
 
-# cloudwatch-iam-role
+# cloudwatch_iam_role
 module "cloudwatch_iam" {
   source = "./modules/iam-role"
 }
@@ -37,16 +49,14 @@ module "cloudwatch_iam" {
 # Database module
 module "database" {
   source               = "./modules/database"
-  vpc-id               = module.vpc.vpc-id
-  private-ip           = var.private-ip
-  database-subnet-ids  = module.vpc.database-subnet-ids
-  ubuntu-ami           = var.ubuntu-ami
+  vpc_id               = module.vpc.vpc_id
+  private_ip           = var.private_ip
+  database_subnet_ids  = module.vpc.database_subnet_ids
+  ubuntu_ami           = var.ubuntu_ami
   instance_type        = var.instance_type
-  ssh-key-name         = var.ssh-key-name
-  default-name         = var.default-name
-  nat-sg-id            = module.vpc.nat-sg-id
-  bastion-sg-id        = module.bastion.bastion-sg-id
-  backend-subnet-cidrs = module.vpc.backend-subnet-cidrs
+  ssh_key_name         = var.ssh_key_name
+  bastion_sg_id        = module.bastion.bastion_sg_id
+  backend_subnet_cidrs = module.vpc.backend_subnet_cidrs
 
   depends_on = [module.vpc, module.bastion]
 }
@@ -54,18 +64,15 @@ module "database" {
 # Backend module
 module "backend" {
   source                           = "./modules/backend"
-  vpc-id                           = module.vpc.vpc-id
-  public-subnet-ids                = module.vpc.public-subnet-ids
-  backend-subnet-ids               = module.vpc.backend-subnet-ids
-  ubuntu-ami                       = var.ubuntu-ami
+  vpc_id                           = module.vpc.vpc_id
+  public_subnet_ids                = module.vpc.public_subnet_ids
+  backend_subnet_ids               = module.vpc.backend_subnet_ids
+  ubuntu_ami                       = var.ubuntu_ami
   instance_type                    = var.instance_type
-  ssh-key-name                     = var.ssh-key-name
-  default-ssh-port                 = var.default-ssh-port
-  default-name                     = var.default-name
-  nat-sg-id                        = module.vpc.nat-sg-id
-  bastion-sg-id                    = module.bastion.bastion-sg-id
-  database-sg-id                   = module.database.database-sg-id
-  backend-subnet-cidrs             = module.vpc.backend-subnet-cidrs
+  ssh_key_name                     = var.ssh_key_name
+  bastion_sg_id                    = module.bastion.bastion_sg_id
+  database_sg_id                   = module.database.database_sg_id
+  backend_subnet_cidrs             = module.vpc.backend_subnet_cidrs
   cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
 
   depends_on = [module.vpc, module.bastion, module.database, module.cloudwatch_iam]
@@ -75,19 +82,16 @@ module "backend" {
 # Frontend module
 module "frontend" {
   source                           = "./modules/frontend"
-  vpc-id                           = module.vpc.vpc-id
-  public-subnet-ids                = module.vpc.public-subnet-ids
-  frontend-subnet-ids              = module.vpc.frontend-subnet-ids
-  alb-be-dns                       = module.backend.be-dns-name
-  ubuntu-ami                       = var.ubuntu-ami
+  vpc_id                           = module.vpc.vpc_id
+  public_subnet_ids                = module.vpc.public_subnet_ids
+  frontend_subnet_ids              = module.vpc.frontend_subnet_ids
+  alb_be_dns                       = module.backend.be_dns_name
+  ubuntu_ami                       = var.ubuntu_ami
   instance_type                    = var.instance_type
-  default-name                     = var.default-name
-  nat-sg-id                        = module.vpc.nat-sg-id
-  bastion-sg-id                    = module.bastion.bastion-sg-id
-  frontend-subnet-cidrs            = module.vpc.frontend-subnet-cidrs
+  bastion_sg_id                    = module.bastion.bastion_sg_id
+  frontend_subnet_cidrs            = module.vpc.frontend_subnet_cidrs
   cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
-  ssh-key-name                     = var.ssh-key-name
-  default-ssh-port                 = var.default-ssh-port
+  ssh_key_name                     = var.ssh_key_name
   depends_on                       = [module.vpc, module.bastion, module.backend, module.cloudwatch_iam]
 }
 

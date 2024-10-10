@@ -1,29 +1,29 @@
 # Frontend SG
-resource "aws_security_group" "frontend-sg" {
-  name        = "Frontend-SG"
+resource "aws_security_group" "frontend_sg" {
+  name        = "Frontend_SG"
   description = "Security Group for Frontend created by terraform"
-  vpc_id      = var.vpc-id
+  vpc_id      = var.vpc_id
   ingress = [
     {
       description      = "allow Bastion SSH"
-      from_port        = 2222
-      to_port          = 2222
+      from_port        = 22
+      to_port          = 22
       protocol         = "tcp"
       cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [var.bastion-sg-id]
+      security_groups  = [var.bastion_sg_id]
       self             = false
     },
     {
-      description      = "Allow from fe-alb"
+      description      = "Allow from fe_alb"
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
       cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [aws_security_group.fe-alb-sg.id]
+      security_groups  = [aws_security_group.fe_alb_sg.id]
       self             = false
     }
   ]
@@ -34,10 +34,10 @@ resource "aws_security_group" "frontend-sg" {
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
-      cidr_blocks      = []
+      cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [var.nat-sg-id]
+      security_groups  = []
       self             = false
     },
     {
@@ -45,10 +45,10 @@ resource "aws_security_group" "frontend-sg" {
       from_port        = 443
       to_port          = 443
       protocol         = "tcp"
-      cidr_blocks      = []
+      cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = [var.nat-sg-id]
+      security_groups  = []
       self             = false
     }
   ]
@@ -57,39 +57,30 @@ resource "aws_security_group" "frontend-sg" {
     Name = "Frontend Security Group"
   }
 
-  depends_on = [aws_security_group.fe-alb-sg]
+  depends_on = [aws_security_group.fe_alb_sg]
 
 }
 
 # log group
-resource "aws_cloudwatch_log_group" "fe-log-group" {
+resource "aws_cloudwatch_log_group" "fe_log_group" {
   name = "fe-access.log"
+}
+
+resource "aws_cloudwatch_log_group" "fe_error_group" {
+  name = "fe-error.log"
 }
 
 # frontend instance
 resource "aws_instance" "frontend" {
-  count                  = length(var.frontend-subnet-ids)
-  ami                    = var.ubuntu-ami
+  count                  = length(var.frontend_subnet_ids)
+  ami                    = var.ubuntu_ami
   instance_type          = var.instance_type
-  key_name               = var.ssh-key-name
-  subnet_id              = var.frontend-subnet-ids[count.index]
-  vpc_security_group_ids = [aws_security_group.frontend-sg.id]
+  key_name               = var.ssh_key_name
+  subnet_id              = var.frontend_subnet_ids[count.index]
+  vpc_security_group_ids = [aws_security_group.frontend_sg.id]
   iam_instance_profile   = var.cloudwatch_instance_profile_name
   user_data              = <<-EOF
     #!/bin/bash
-    echo "Change default username"
-    user=${var.default-name}
-    usermod  -l $user ubuntu
-    groupmod -n $user ubuntu
-    usermod  -d /home/$user -m $user
-    if [ -f /etc/sudoers.d/90-cloudimg-ubuntu ]; then
-    mv /etc/sudoers.d/90-cloudimg-ubuntu /etc/sudoers.d/90-cloud-init-users
-    fi
-    perl -pi -e "s/ubuntu/$user/g;" /etc/sudoers.d/90-cloud-init-users
-
-    echo "Change default port"
-    sudo perl -pi -e 's/^#?Port 22$/Port ${var.default-ssh-port}/' /etc/ssh/sshd_config service
-    sudo systemctl restart sshd
 
     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
@@ -112,16 +103,17 @@ resource "aws_instance" "frontend" {
     sudo usermod -aG docker $USER
     sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
     sudo chmod g+rwx "$HOME/.docker" -R
-    newgrp docker
+    sudo newgrp docker
     sudo systemctl enable docker.service
     sudo systemctl enable containerd.service
     sudo service docker restart
 
     sudo mkdir -p /var/log/nginx
+    docker pull duychien1405/shopizer-fe:1.2
 
-    docker run -d --restart always \
-    -e "APP_MERCHANT=DEFAULT" \
-    -e "APP_BASE_URL=http://${var.alb-be-dns}:8080" \
+    sudo docker run -d --restart always \
+    -e APP_MERCHANT=DEFAULT \
+    -e APP_BASE_URL=http://${var.alb_be_dns}:8080 \
     -p 80:80 \
     -v /var/log/nginx:/var/log/nginx \
     --name shopizer_shop \
@@ -145,68 +137,68 @@ resource "aws_instance" "frontend" {
 
     cat > amazon-cloudwatch-agent.json <<- 'EOM'
     {
-      "agent": {
+    "agent": {
         "metrics_collection_interval": 60,
         "run_as_user": "root"
-      },
-      "logs": {
+    },
+    "logs": {
         "logs_collected": {
-          "files": {
+        "files": {
             "collect_list": [
-              {
+            {
                 "file_path": "/var/log/nginx/access.log",
                 "log_group_name": "fe-access.log",
                 "log_stream_name": "{instance_id}",
                 "retention_in_days": 30
-              },
-              {
+            },
+            {
                 "file_path": "/var/log/nginx/error.log",
                 "log_group_name": "fe-error.log",
                 "log_stream_name": "{instance_id}",
                 "retention_in_days": 30
-              }
+            }
             ]
-          }
         }
-      },
-      "metrics": {
+        }
+    },
+    "metrics": {
         "aggregation_dimensions": [
-          [
+        [
             "InstanceId"
-          ]
+        ]
         ],
         "append_dimensions": {
-          "AutoScalingGroupName": "$${aws:AutoScalingGroupName}",
-          "ImageId": "$${aws:ImageId}",
-          "InstanceId": "$${aws:InstanceId}",
-          "InstanceType": "$${aws:InstanceType}"
+        "AutoScalingGroupName": "$${aws:AutoScalingGroupName}",
+        "ImageId": "$${aws:ImageId}",
+        "InstanceId": "$${aws:InstanceId}",
+        "InstanceType": "$${aws:InstanceType}"
         },
         "metrics_collected": {
-          "collectd": {
+        "collectd": {
             "metrics_aggregation_interval": 60
-          },
-          "disk": {
+        },
+        "disk": {
             "measurement": [
-              "used_percent"
+            "used_percent"
             ],
             "metrics_collection_interval": 60,
             "resources": [
-              "*"
+            "*"
             ]
-          },
-          "mem": {
+        },
+        "mem": {
             "measurement": [
-              "mem_used_percent"
+            "mem_used_percent"
             ],
             "metrics_collection_interval": 60
-          },
-          "statsd": {
+        },
+        "statsd": {
             "metrics_aggregation_interval": 60,
             "metrics_collection_interval": 30,
             "service_address": ":8125"
-          }
         }
-      }
+        }
+    }
     }
     EOM
 
@@ -214,11 +206,11 @@ resource "aws_instance" "frontend" {
     sudo touch /usr/share/collectd/types.db
     sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:amazon-cloudwatch-agent.json -s
 
-          EOF
-
+    EOF
+          
   tags = {
     Name = "Frontend ${count.index + 1} creating by terraform"
   }
 
-  depends_on = [aws_security_group.frontend-sg]
+  depends_on = [aws_security_group.frontend_sg]
 }

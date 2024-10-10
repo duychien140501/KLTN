@@ -1,30 +1,26 @@
-variable "vpc-id" {
+variable "vpc_id" {
   type = string
 }
 
-variable "internet-cidr" {
+variable "internet_cidr" {
   description = "cidr block for internet"
   type        = string
   default     = "0.0.0.0/0"
 }
 
-variable "ubuntu-ami" {
+variable "ubuntu_ami" {
   type = string
 }
 
-variable "ssh-key-name" {
+variable "ssh_key_name" {
   type = string
 }
 
-variable "default-name" {
-  type = string
-}
-
-variable "public-subnet-ids" {
+variable "public_subnet_ids" {
   type = list(string)
 }
 
-variable "vpc-cidr" {
+variable "vpc_cidr" {
   description = "VPC CIDR"
   type        = string
 }
@@ -32,3 +28,4 @@ variable "vpc-cidr" {
 variable "instance_type" {
   type = string
 }
+

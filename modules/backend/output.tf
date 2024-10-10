@@ -1,17 +1,17 @@
-output "be-alb-id" {
-  value = aws_lb.be-alb.id
+output "be_alb_id" {
+  value = aws_lb.be_alb.id
 }
 
-output "be-dns-name" {
-  value = aws_lb.be-alb.dns_name
+output "be_dns_name" {
+  value = aws_lb.be_alb.dns_name
 }
 
-output "be-alb-arn" {
-  value = aws_lb.be-alb.arn
+output "be_alb_arn" {
+  value = aws_lb.be_alb.arn
 }
 
-output "be-alb-sg-id" {
-  value = aws_security_group.be-alb-sg.id
+output "be_alb_sg_id" {
+  value = aws_security_group.be_alb_sg.id
 }
 
 output "backend_instance_ids" {

@@ -1,31 +1,35 @@
-output "vpc-id" {
-  value = aws_vpc.shopzer-vpc.id
+output "vpc_id" {
+  value = aws_vpc.shopzer_vpc.id
 }
 
-output "public-subnet-ids" {
+output "public_subnet_ids" {
   value = [for subnet in aws_subnet.public_subnet : subnet.id]
 }
 
-output "frontend-subnet-ids" {
+output "frontend_subnet_ids" {
   value = [for subnet in aws_subnet.frontend_subnet : subnet.id]
 }
 
-output "backend-subnet-ids" {
+output "backend_subnet_ids" {
   value = [for subnet in aws_subnet.backend_subnet : subnet.id]
 }
 
-output "database-subnet-ids" {
+output "database_subnet_ids" {
   value = [for subnet in aws_subnet.database_subnet : subnet.id]
 }
 
-output "nat-sg-id" {
-  value = aws_security_group.nat-sg.id
+output "logging_subnet_id" {
+  value = aws_subnet.logging_subnet.id
 }
 
-output "backend-subnet-cidrs" {
-  value = var.backend-subnet-cidrs
+output "backend_subnet_cidrs" {
+  value = var.backend_subnet_cidrs
 }
 
-output "frontend-subnet-cidrs" {
-  value = var.frontend-subnet-cidrs
+output "frontend_subnet_cidrs" {
+  value = var.frontend_subnet_cidrs
+}
+
+output "logging_subnet_cidrs" {
+  value = var.logging_subnet_cidrs
 }

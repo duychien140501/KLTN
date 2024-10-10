@@ -1,56 +1,53 @@
 # Standard Variables
-variable "aws-region" {
+variable "aws_region" {
   description = "Region for this infras"
   type        = string
 }
 
-variable "default-name" {
+variable "private_ip" {
   type = string
 }
 
-variable "nat-ami" {
+variable "logging_private_ip" {
   type = string
 }
 
-variable "private-ip" {
+variable "ubuntu_ami" {
   type = string
 }
 
-variable "ubuntu-ami" {
+variable "ssh_key_name" {
   type = string
 }
 
-variable "ssh-key-name" {
-  type = string
-}
-
-variable "vpc-cidr" {
+variable "vpc_cidr" {
   description = "VPC CIDR"
   type        = string
 }
 
-variable "public-subnet-cidrs" {
+variable "public_subnet_cidrs" {
   description = "Public subnet CIDR"
   type        = list(string)
 }
 
-variable "frontend-subnet-cidrs" {
+variable "frontend_subnet_cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
 }
 
-variable "backend-subnet-cidrs" {
+variable "backend_subnet_cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
 }
 
-variable "database-subnet-cidrs" {
+variable "database_subnet_cidrs" {
   description = "Subnet for frontend"
   type        = list(string)
 }
 
-variable "default-ssh-port" {
-  type = string
+variable "logging_subnet_cidrs" {
+  description = "Subnet for logstash"
+  type        = string
 }
 
 variable "instance_type" {
