@@ -50,6 +50,7 @@ module "cloudwatch_iam" {
 module "database" {
   source               = "./modules/database"
   vpc_id               = module.vpc.vpc_id
+  vpc_cidr             = var.vpc_cidr 
   private_ip           = var.private_ip
   database_subnet_ids  = module.vpc.database_subnet_ids
   ubuntu_ami           = var.ubuntu_ami
@@ -57,6 +58,7 @@ module "database" {
   ssh_key_name         = var.ssh_key_name
   bastion_sg_id        = module.bastion.bastion_sg_id
   backend_subnet_cidrs = module.vpc.backend_subnet_cidrs
+  logging_private_ip   = module.logging.logging_private_ip
 
   depends_on = [module.vpc, module.bastion]
 }
@@ -65,6 +67,7 @@ module "database" {
 module "backend" {
   source                           = "./modules/backend"
   vpc_id                           = module.vpc.vpc_id
+  vpc_cidr                         = var.vpc_cidr
   public_subnet_ids                = module.vpc.public_subnet_ids
   backend_subnet_ids               = module.vpc.backend_subnet_ids
   ubuntu_ami                       = var.ubuntu_ami
@@ -74,6 +77,7 @@ module "backend" {
   database_sg_id                   = module.database.database_sg_id
   backend_subnet_cidrs             = module.vpc.backend_subnet_cidrs
   cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
+  logging_private_ip               = module.logging.logging_private_ip
 
   depends_on = [module.vpc, module.bastion, module.database, module.cloudwatch_iam]
 
@@ -83,6 +87,7 @@ module "backend" {
 module "frontend" {
   source                           = "./modules/frontend"
   vpc_id                           = module.vpc.vpc_id
+  vpc_cidr                         = var.vpc_cidr
   public_subnet_ids                = module.vpc.public_subnet_ids
   frontend_subnet_ids              = module.vpc.frontend_subnet_ids
   alb_be_dns                       = module.backend.be_dns_name
@@ -93,6 +98,7 @@ module "frontend" {
   cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
   ssh_key_name                     = var.ssh_key_name
   depends_on                       = [module.vpc, module.bastion, module.backend, module.cloudwatch_iam]
+  logging_private_ip               = module.logging.logging_private_ip
 }
 
 module "cloudwatch" {

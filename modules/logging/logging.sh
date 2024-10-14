@@ -73,14 +73,75 @@ input {
 filter {}
 
 output {
-  elasticsearch {
-    index => "logstash-%{+YYYY.MM.dd}"
-    hosts => ["https://es01:9200"]
-    user => "elastic"
-    password => "elastic"
-    ssl_enabled => true
-    cacert => "/usr/share/logstash/certs/ca/ca.crt"
+  if "fe-access" in [tags] {
+    elasticsearch {
+      index => "fe-access-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  } 
+  if "fe-error" in [tags] {
+    elasticsearch {
+      index => "fe-error-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
   }
+  if "adm-error" in [tags] {
+    elasticsearch {
+      index => "adm-error-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
+  if "adm-access" in [tags] {
+    elasticsearch {
+      index => "adm-access-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
+  if "backend" in [tags] {
+    elasticsearch {
+      index => "backend-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
+  if "mysql" in [tags] {
+    elasticsearch {
+      index => "mysql-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
+
+  # elasticsearch {
+  #   index => "logstash-%{+YYYY.MM.dd}"
+  #   hosts => ["https://es01:9200"]
+  #   user => "elastic"
+  #   password => "elastic"
+  #   ssl_enabled => true
+  #   cacert => "/usr/share/logstash/certs/ca/ca.crt"
+  # }
 }
 EOF
 
