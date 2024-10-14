@@ -35,3 +35,11 @@ variable "backend_subnet_cidrs" {
 variable "instance_type" {
   type = string
 }
+
+variable "vpc_cidr" {
+  type        = string
+}
+
+variable "logging_private_ip" {
+  type = string
+}

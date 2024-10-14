@@ -87,7 +87,6 @@ resource "aws_security_group" "logging_sg" {
       security_groups  = []
       self             = false
     }
-    ,
 
   ]
 
@@ -109,11 +108,6 @@ resource "aws_instance" "logging_instance" {
     volume_size = 30
     volume_type = "gp3"
   }
-
-  #   network_interface {
-  #     device_index         = 0
-  #     network_interface_id = aws_network_interface.logging_ni.id
-  #   }
 
   user_data = file("${path.module}/logging.sh")
 

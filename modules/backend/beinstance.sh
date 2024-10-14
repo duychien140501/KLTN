@@ -34,6 +34,40 @@ sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 sudo service docker restart
 
+sudo apt-get update -y
+sudo apt-get install apt-transport-https -y
+sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-8.x.list
+
+sudo apt-get update -y
+sudo apt-get install filebeat -y
+sudo apt-get update -y
+
+sudo systemctl enable filebeat
+sudo systemctl start filebeat
+
+sudo cat > /etc/filebeat/filebeat.yml <<- 'EOM'
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  id: my-filestream-id
+  enabled: true
+  paths:
+    - /var/log/shopizer.log
+
+# ======================= Elasticsearch template setting =======================
+setup.template.settings:
+  index.number_of_shards: 1
+
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+   #The Logstash hosts
+  hosts: ["${var.logging_private_ip}:5044"]
+EOM
+
+sudo systemctl restart filebeat
+
+
 # Setup backend
 mkdir -p /var/log/
 docker pull duychien1405/shopizer-server:1.1

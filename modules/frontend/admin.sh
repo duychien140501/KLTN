@@ -9,6 +9,7 @@ sudo install -m 0755 -d /etc/apt/keyrings
 sudo rm -rf /etc/apt/keyrings/docker.gpg
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
+sudo apt-get update 
 
 echo \
 "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
@@ -26,6 +27,45 @@ sudo newgrp docker
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 sudo service docker restart
+
+sudo apt-get update -y
+apt-get install apt-transport-https -y
+sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-8.x.list
+
+sudo apt-get update -y
+sudo apt-get install filebeat -y
+sudo apt-get update -y
+
+sudo systemctl enable filebeat
+sudo systemctl start filebeat
+
+sudo cat << 'EOF' > /etc/filebeat/filebeat.yml
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  id: my-filestream-id
+  enabled: true
+  paths:
+    - /var/log/*.log
+
+# ============================== Filebeat modules ==============================
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: true
+
+# ======================= Elasticsearch template setting =======================
+setup.template.settings:
+  index.number_of_shards: 1
+
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+   #The Logstash hosts
+  hosts: ["${var.logging-private-ip}:5044"]
+EOF
+
+sudo systemctl restart filebeat
 
 sudo mkdir -p /var/log/nginx
 docker pull duychien1405/shopizer-fe-admin:1.3
