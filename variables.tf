@@ -53,3 +53,11 @@ variable "logging_subnet_cidrs" {
 variable "instance_type" {
   type = string
 }
+
+variable "DB_USER" {
+  type = string
+}
+
+variable "DB_PASS" {
+  type = string
+}

@@ -150,6 +150,50 @@ sudo mysql -u root -p"root" -e "FLUSH PRIVILEGES;"
 # allow remote access
 sudo sed -i 's/bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
 sudo systemctl restart mysql
+
+# backup database
+sudo apt install unzip -y
+sudo apt update -y
+
+sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
+sudo unzip awscliv2.zip
+sudo ./aws/install
+
+sudo mkdir -p ./backupdb
+cd ./backupdb
+sudo touch ./backupdb.sh
+sudo chmod +x ./backupdb.sh
+
+sudo cat > ./backupdb.sh <<- 'EOM'
+#!/bin/bash
+
+# MySQL database credentials
+DB_USER=${var.DB_USER}
+DB_PASS=${var.DB_PASS}
+
+# Timestamp for backup filename
+TIMESTAMP=$(date +"%Y%m%d")
+
+# S3 bucket name
+S3_BUCKET="shopizer-database-backup-bucket"
+
+# Dump MySQL database
+BACKUP_FILE="./shopizer-backup-$TIMESTAMP.sql"
+mysqldump -u $DB_USER -p $DB_PASS --all-databases > $BACKUP_FILE
+
+# Upload to S3
+aws s3 cp $BACKUP_FILE s3://$S3_BUCKET/
+
+rm $BACKUP_FILE
+EOM
+
+crontab -l > ./cronbackupdb
+sudo cat >> ./cronbackupdb <<- 'EOM'
+# backup database everyday at 1:00 AM
+0 1 * * * /backupdb/backupdb.sh
+EOM
+crontab ./cronbackupdb
+
     EOF
 
   network_interface {
@@ -166,7 +210,15 @@ sudo systemctl restart mysql
 
 # Create an S3 bucket
 resource "aws_s3_bucket" "backup" {
-  bucket = "shopizer-database-backup-bucket" # replace with your bucket name
+  bucket = "shopizer-database-backup-bucket" 
+}
+
+resource "aws_s3_bucket_versioning" "backup" {
+  bucket = aws_s3_bucket.backup.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 # Create an IAM policy to allow writing to the S3 bucket
