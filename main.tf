@@ -50,7 +50,7 @@ module "cloudwatch_iam" {
 module "database" {
   source               = "./modules/database"
   vpc_id               = module.vpc.vpc_id
-  vpc_cidr             = var.vpc_cidr 
+  vpc_cidr             = var.vpc_cidr
   private_ip           = var.private_ip
   database_subnet_ids  = module.vpc.database_subnet_ids
   ubuntu_ami           = var.ubuntu_ami
@@ -59,7 +59,9 @@ module "database" {
   bastion_sg_id        = module.bastion.bastion_sg_id
   backend_subnet_cidrs = module.vpc.backend_subnet_cidrs
   logging_private_ip   = module.logging.logging_private_ip
-
+  DB_USER              = var.DB_USER
+  DB_PASS              = var.DB_PASS
+  
   depends_on = [module.vpc, module.bastion]
 }
 

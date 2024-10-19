@@ -43,3 +43,11 @@ variable "vpc_cidr" {
 variable "logging_private_ip" {
   type = string
 }
+
+variable "DB_USER" {
+  type = string
+}
+
+variable "DB_PASS" {
+  type = string
+}
