@@ -50,10 +50,11 @@ sudo cat > /etc/filebeat/filebeat.yml <<- 'EOM'
 # ============================== Filebeat inputs ===============================
 filebeat.inputs:
 - type: filestream
-  id: my-filestream-id
+  id: backend
   enabled: true
   paths:
     - /var/log/shopizer.log
+  tags: ["backend"]
 
 # ======================= Elasticsearch template setting =======================
 setup.template.settings:
@@ -110,10 +111,10 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
 			]
 		],
 		"append_dimensions": {
-			"AutoScalingGroupName": "${aws:AutoScalingGroupName}",
-			"ImageId": "${aws:ImageId}",
-			"InstanceId": "${aws:InstanceId}",
-			"InstanceType": "${aws:InstanceType}"
+			"AutoScalingGroupName": "$${aws:AutoScalingGroupName}",
+			"ImageId": "$${aws:ImageId}",
+			"InstanceId": "$${aws:InstanceId}",
+			"InstanceType": "$${aws:InstanceType}"
 		},
 		"metrics_collected": {
 			"collectd": {

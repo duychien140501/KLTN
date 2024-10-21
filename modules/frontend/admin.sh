@@ -1,6 +1,4 @@
 #!/bin/bash
-dns=${var.alb-be-dns}
-
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
 sudo apt-get update 
@@ -9,7 +7,6 @@ sudo install -m 0755 -d /etc/apt/keyrings
 sudo rm -rf /etc/apt/keyrings/docker.gpg
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
-sudo apt-get update 
 
 echo \
 "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
@@ -40,20 +37,21 @@ sudo apt-get update -y
 sudo systemctl enable filebeat
 sudo systemctl start filebeat
 
-sudo cat << 'EOF' > /etc/filebeat/filebeat.yml
+sudo cat > /etc/filebeat/filebeat.yml <<- 'EOM'
 # ============================== Filebeat inputs ===============================
 filebeat.inputs:
 - type: filestream
-  id: my-filestream-id
+  id: adm-access
   enabled: true
   paths:
-    - /var/log/*.log
-
-# ============================== Filebeat modules ==============================
-
-filebeat.config.modules:
-  path: ${path.config}/modules.d/*.yml
-  reload.enabled: true
+    - /var/log/nginx/adm-access.log
+  tags: ["adm-access"]
+- type: filestream
+  id: adm-error
+  enabled: true
+  paths:
+    - /var/log/nginx/adm-error.log
+  tags: ["adm-error"]
 
 # ======================= Elasticsearch template setting =======================
 setup.template.settings:
@@ -62,8 +60,8 @@ setup.template.settings:
 # ------------------------------ Logstash Output -------------------------------
 output.logstash:
    #The Logstash hosts
-  hosts: ["${var.logging-private-ip}:5044"]
-EOF
+  hosts: ["${var.logging_private_ip}:5044"]
+EOM
 
 sudo systemctl restart filebeat
 
@@ -71,7 +69,7 @@ sudo mkdir -p /var/log/nginx
 docker pull duychien1405/shopizer-fe-admin:1.3
 
 sudo docker run -d  --restart always \
--e APP_BASE_URL=http://backend-alb-1458655565.ap-southeast-1.elb.amazonaws.com:8080  \
+-e APP_BASE_URL=http://${var.alb_be_dns}:8080  \
 -p 82:80 -v /var/log/nginx:/var/log/nginx  \
 --name shopizer_admin \
 duychien1405/shopizer-fe-admin:1.3

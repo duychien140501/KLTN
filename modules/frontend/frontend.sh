@@ -26,12 +26,52 @@ sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 sudo service docker restart
 
+sudo apt-get update -y
+sudo apt-get install apt-transport-https -y
+sudo wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-8.x.list
+
+sudo apt-get update -y
+sudo apt-get install filebeat -y
+sudo apt-get update -y
+
+sudo systemctl enable filebeat
+sudo systemctl start filebeat
+
+sudo cat > /etc/filebeat/filebeat.yml <<- 'EOM'
+# ============================== Filebeat inputs ===============================
+filebeat.inputs:
+- type: filestream
+  id: fe-access
+  enabled: true
+  paths:
+    - /var/log/nginx/access.log
+  tags: ["fe-access"]
+- type: filestream
+  id: fe-error
+  enabled: true
+  paths:
+    - /var/log/nginx/error.log
+  tags: ["fe-error"]
+
+# ======================= Elasticsearch template setting =======================
+setup.template.settings:
+  index.number_of_shards: 1
+
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+   #The Logstash hosts
+  hosts: ["${var.logging_private_ip}:5044"]
+EOM
+
+sudo systemctl restart filebeat
+
 sudo mkdir -p /var/log/nginx
 docker pull duychien1405/shopizer-fe:1.2
 
 sudo docker run -d --restart always \
 -e APP_MERCHANT=DEFAULT \
--e APP_BASE_URL=http://${var.alb-be-dns}:8080 \
+-e APP_BASE_URL=http://${var.alb_be_dns}:8080 \
 -p 80:80 \
 -v /var/log/nginx:/var/log/nginx \
 --name shopizer_shop \
