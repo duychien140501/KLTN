@@ -213,14 +213,6 @@ resource "aws_s3_bucket" "backup" {
   bucket = "shopizer-database-backup-bucket" 
 }
 
-resource "aws_s3_bucket_versioning" "backup" {
-  bucket = aws_s3_bucket.backup.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
 # Create an IAM policy to allow writing to the S3 bucket
 resource "aws_iam_policy" "backup" {
   name        = "DatabaseBackup"
