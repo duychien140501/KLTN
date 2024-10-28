@@ -210,15 +210,7 @@ crontab ./cronbackupdb
 
 # Create an S3 bucket
 resource "aws_s3_bucket" "backup" {
-  bucket = "shopizer-database-backup-bucket" 
-}
-
-resource "aws_s3_bucket_versioning" "backup" {
-  bucket = aws_s3_bucket.backup.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
+  bucket = "shopizer-database-backup" 
 }
 
 # Create an IAM policy to allow writing to the S3 bucket
@@ -238,8 +230,8 @@ resource "aws_iam_policy" "backup" {
             "s3:ListBucket"
           ],
           "Resource": [
-            "arn:aws:s3:::shopizer-database-backup-bucket",
-            "arn:aws:s3:::shopizer-database-backup-bucket/*"
+            "arn:aws:s3:::shopizer-database-backup",
+            "arn:aws:s3:::shopizer-database-backup/*"
           ]
         }
       ]
