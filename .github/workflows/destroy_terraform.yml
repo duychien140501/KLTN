@@ -1,4 +1,4 @@
-name: CD to AWS
+name: Destroy Infrastructure to AWS
 
 on:
   workflow_dispatch:

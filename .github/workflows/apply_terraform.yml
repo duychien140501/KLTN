@@ -1,10 +1,7 @@
-name: CD to AWS
+name: Auto Deloy to AWS
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
   workflow_dispatch:
