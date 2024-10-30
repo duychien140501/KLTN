@@ -1,12 +1,6 @@
 name: CD to AWS
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -48,5 +42,5 @@ jobs:
     - name: Test Terraform
       run: terraform validate
 
-    - name: Apply Terraform
-      run: terraform apply -auto-approve -var-file="./0_values/values.tfvars"
+    - name: Destroy Terraform
+      run: terraform destroy -auto-approve -var-file="./0_values/values.tfvars"
