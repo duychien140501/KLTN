@@ -175,7 +175,7 @@ DB_PASS=${var.DB_PASS}
 TIMESTAMP=$(date +"%Y%m%d")
 
 # S3 bucket name
-S3_BUCKET="shopizer-database-backup-bucket"
+S3_BUCKET="shopizer-database-backup"
 
 # Dump MySQL database
 BACKUP_FILE="./shopizer-backup-$TIMESTAMP.sql"
@@ -190,7 +190,7 @@ EOM
 crontab -l > ./cronbackupdb
 sudo cat >> ./cronbackupdb <<- 'EOM'
 # backup database everyday at 1:00 AM
-0 1 * * * /backupdb/backupdb.sh
+*/10 * * * * /backupdb/backupdb.sh
 EOM
 crontab ./cronbackupdb
 
