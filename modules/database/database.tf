@@ -88,11 +88,7 @@ resource "aws_instance" "database_instance" {
   iam_instance_profile = aws_iam_instance_profile.backup.name
   user_data            = <<-EOF
 #!/bin/bash
-
-sudo systemctl restart sshd
-
 # Install mysql
-
 echo "mysql-server mysql-server/root_password password root" | sudo debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password root" | sudo debconf-set-selections
 
@@ -175,11 +171,11 @@ DB_PASS=${var.DB_PASS}
 TIMESTAMP=$(date +"%Y%m%d")
 
 # S3 bucket name
-S3_BUCKET="shopizer-database-backup-bucket"
+S3_BUCKET="shopizer-database-backup"
 
 # Dump MySQL database
 BACKUP_FILE="./shopizer-backup-$TIMESTAMP.sql"
-mysqldump -u $DB_USER -p $DB_PASS --all-databases > $BACKUP_FILE
+mysqldump -u$DB_USER -p$DB_PASS SALESMANAGER > $BACKUP_FILE
 
 # Upload to S3
 aws s3 cp $BACKUP_FILE s3://$S3_BUCKET/

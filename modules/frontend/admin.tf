@@ -145,6 +145,12 @@ filebeat.inputs:
   paths:
     - /var/log/nginx/adm-error.log
   tags: ["adm-error"]
+- type: filestream
+  id: adm-container
+  enabled: true
+  paths:
+    - /get-log-container/container-log.log
+  tags: ["adm-container"]
 
 # ======================= Elasticsearch template setting =======================
 setup.template.settings:
@@ -178,6 +184,9 @@ sudo docker exec shopizer_admin /bin/sh -c "nginx -s reload"
 sudo docker restart shopizer_admin
 
 # setup cloudwatch agent
+sudo apt-get -y install collectd
+sudo apt-get -y update
+
 sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 
 sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
@@ -185,7 +194,7 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 cat > amazon-cloudwatch-agent.json <<- 'EOM'
 {
     "agent": {
-    "metrics_collection_interval": 60,
+    "metrics_collection_interval": 20,
     "run_as_user": "root"
     },
     "logs": {
@@ -222,13 +231,13 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
     },
     "metrics_collected": {
         "collectd": {
-        "metrics_aggregation_interval": 60
+        "metrics_aggregation_interval": 20
         },
         "disk": {
         "measurement": [
             "used_percent"
         ],
-        "metrics_collection_interval": 60,
+        "metrics_collection_interval": 20,
         "resources": [
             "*"
         ]
@@ -237,17 +246,44 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
         "measurement": [
             "mem_used_percent"
         ],
-        "metrics_collection_interval": 60
+        "metrics_collection_interval": 20
+        },
+        "cpu": {
+          "measurement": [
+            "cpu_usage_user",
+            "cpu_usage_idle",
+            "cpu_usage_system"
+          ],
+          "metrics_collection_interval": 20,
+          "totalcpu": true,
+          "resources": [
+            "*"
+          ]
         },
         "statsd": {
-        "metrics_aggregation_interval": 60,
-        "metrics_collection_interval": 10,
+        "metrics_aggregation_interval": 20,
+        "metrics_collection_interval": 20,
         "service_address": ":8125"
         }
     }
     }
 }
 EOM
+
+sudo mkdir -p /get-log-container/
+sudo touch /get-log-container/log-container.sh
+sudo chmod +x /get-log-container/log-container.sh
+
+sudo cat > /get-log-container/log-container.sh <<- 'EOM'
+#!/bin/bash
+sudo docker logs shopizer_admin > /get-log-container/container-log.log
+EOM
+
+crontab -l > /get-log-container/crontab
+sudo cat >> /get-log-container/crontab <<- 'EOM'
+*/5 * * * * /get-log-container/log-container.sh
+EOM
+crontab /get-log-container/crontab
 
 sudo mkdir -p  /usr/share/collectd/
 sudo touch /usr/share/collectd/types.db

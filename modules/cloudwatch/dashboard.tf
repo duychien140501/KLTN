@@ -55,7 +55,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view      = "timeSeries"
           stacked   = false
           stat      = "Sum"
-          period    = 300
+          period    = 60
           yAxis = {
             left = {
               min = 0
@@ -106,7 +106,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "Mem_used_percent_fe"
-          period   = 300
+          period   = 60
           timezone = "+0700"
           region   = "${var.region}"
         }
@@ -125,7 +125,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "Disk_used_percent_fe"
-          period   = 300
+          period   = 60
           width    = 1500
           height   = 200
           start    = "-PT3H"
@@ -148,7 +148,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "CPUUtilization_fe"
-          period   = 300
+          period   = 60
           width    = 1500
           height   = 200
           start    = "-PT3H"
@@ -209,7 +209,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view      = "timeSeries"
           stacked   = false
           stat      = "Sum"
-          period    = 300
+          period    = 60
           yAxis = {
             left = {
               min = 0
@@ -260,7 +260,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "Mem_used_percent_adm"
-          period   = 300
+          period   = 60
           timezone = "+0700"
           region   = "${var.region}"
         }
@@ -279,7 +279,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "Disk_used_percent_adm"
-          period   = 300
+          period   = 60
           width    = 1500
           height   = 200
           start    = "-PT3H"
@@ -302,7 +302,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "CPUUtilization_adm"
-          period   = 300
+          period   = 60
           width    = 1500
           height   = 200
           start    = "-PT3H"
@@ -382,7 +382,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "Mem_used_percent_be"
-          period   = 300
+          period   = 60
           timezone = "+0700"
           region   = "${var.region}"
         }
@@ -401,7 +401,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "Disk_used_percent_be"
-          period   = 300
+          period   = 60
           width    = 1500
           height   = 200
           start    = "-PT3H"
@@ -424,7 +424,7 @@ resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
           view     = "timeSeries"
           stacked  = false
           title    = "CPUUtilization_be"
-          period   = 300
+          period   = 60
           width    = 1500
           height   = 200
           start    = "-PT3H"
