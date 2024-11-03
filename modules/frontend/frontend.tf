@@ -146,6 +146,12 @@ filebeat.inputs:
   paths:
     - /var/log/nginx/error.log
   tags: ["fe-error"]
+- type: filestream
+  id: fe-container
+  enabled: true
+  paths:
+    - /get-log-container/container-log.log
+  tags: ["fe-container"]
 
 # ======================= Elasticsearch template setting =======================
 setup.template.settings:
@@ -182,6 +188,9 @@ sudo docker exec shopizer_shop /bin/sh -c "nginx -s reload"
 sudo docker restart shopizer_shop
 
 # setup cloudwatch agent
+sudo apt-get -y install collectd
+sudo apt-get -y update
+
 sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 
 sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
@@ -189,7 +198,7 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 cat > amazon-cloudwatch-agent.json <<- 'EOM'
 {
 "agent": {
-    "metrics_collection_interval": 60,
+    "metrics_collection_interval": 20,
     "run_as_user": "root"
 },
 "logs": {
@@ -200,13 +209,13 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
             "file_path": "/var/log/nginx/access.log",
             "log_group_name": "fe-access.log",
             "log_stream_name": "{instance_id}",
-            "retention_in_days": 30
+            "retention_in_days": -1
         },
         {
             "file_path": "/var/log/nginx/error.log",
             "log_group_name": "fe-error.log",
             "log_stream_name": "{instance_id}",
-            "retention_in_days": 30
+            "retention_in_days": -1
         }
         ]
     }
@@ -226,13 +235,13 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
     },
     "metrics_collected": {
     "collectd": {
-        "metrics_aggregation_interval": 60
+        "metrics_aggregation_interval": 20
     },
     "disk": {
         "measurement": [
         "used_percent"
         ],
-        "metrics_collection_interval": 60,
+        "metrics_collection_interval": 20,
         "resources": [
         "*"
         ]
@@ -241,11 +250,23 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
         "measurement": [
         "mem_used_percent"
         ],
-        "metrics_collection_interval": 60
+        "metrics_collection_interval": 20
+    },
+    "cpu": {
+      "measurement": [
+        "cpu_usage_user",
+        "cpu_usage_idle",
+        "cpu_usage_system"
+      ],
+      "metrics_collection_interval": 20,
+      "totalcpu": true,
+      "resources": [
+        "*"
+      ]
     },
     "statsd": {
-        "metrics_aggregation_interval": 60,
-        "metrics_collection_interval": 30,
+        "metrics_aggregation_interval": 20,
+        "metrics_collection_interval": 20,
         "service_address": ":8125"
     }
     }
@@ -253,10 +274,24 @@ cat > amazon-cloudwatch-agent.json <<- 'EOM'
 }
 EOM
 
+sudo mkdir -p /get-log-container/
+sudo touch /get-log-container/log-container.sh
+sudo chmod +x /get-log-container/log-container.sh
+
+sudo cat > /get-log-container/log-container.sh <<- 'EOM'
+#!/bin/bash
+sudo docker logs shopizer_shop > /get-log-container/container-log.log
+EOM
+
+crontab -l > /get-log-container/crontab
+sudo cat >> /get-log-container/crontab <<- 'EOM'
+*/5 * * * * /get-log-container/log-container.sh
+EOM
+crontab /get-log-container/crontab
+
 sudo mkdir -p  /usr/share/collectd/
 sudo touch /usr/share/collectd/types.db
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:amazon-cloudwatch-agent.json -s
-
     EOF
           
   tags = {

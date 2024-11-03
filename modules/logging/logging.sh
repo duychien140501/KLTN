@@ -93,6 +93,16 @@ output {
       cacert => "/usr/share/logstash/certs/ca/ca.crt"
     }
   }
+  if "fe-container" in [tags] {
+    elasticsearch {
+      index => "frontend-container-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
   if "adm-error" in [tags] {
     elasticsearch {
       index => "adm-error-%{+YYYY.MM.dd}"
@@ -113,9 +123,29 @@ output {
       cacert => "/usr/share/logstash/certs/ca/ca.crt"
     }
   }
+  if "admin-container" in [tags] {
+    elasticsearch {
+      index => "admin-container-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
   if "backend" in [tags] {
     elasticsearch {
       index => "backend-%{+YYYY.MM.dd}"
+      hosts => ["https://es01:9200"]
+      user => "elastic"
+      password => "elastic"
+      ssl_enabled => true
+      cacert => "/usr/share/logstash/certs/ca/ca.crt"
+    }
+  }
+  if "be-container" in [tags] {
+    elasticsearch {
+      index => "backend-container-%{+YYYY.MM.dd}"
       hosts => ["https://es01:9200"]
       user => "elastic"
       password => "elastic"
