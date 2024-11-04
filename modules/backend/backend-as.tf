@@ -200,7 +200,7 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-c
 
 # Auto Scaling Group for Backend Instances
 resource "aws_autoscaling_group" "backend" {
-  desired_capacity    = 1
+  desired_capacity    = 0
   max_size            = 2
   min_size            = 0
   vpc_zone_identifier = var.backend_subnet_ids

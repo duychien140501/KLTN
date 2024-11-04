@@ -15,6 +15,12 @@ module "vpc" {
   instance_type         = var.instance_type
 }
 
+# Waf module
+module "waf" {
+  source = "./modules/waf"
+  fe_alb_arn = module.frontend.fe_alb_arn
+}
+
 # Logging module
 module "logging" {
   source               = "./modules/logging"
