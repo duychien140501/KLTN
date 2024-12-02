@@ -15,17 +15,6 @@ resource "aws_security_group" "fe_alb_sg" {
       prefix_list_ids  = []
       security_groups  = []
       self             = false
-    },
-    {
-      description      = "Allow all traffic port 82"
-      from_port        = 82
-      to_port          = 82
-      protocol         = "tcp"
-      cidr_blocks      = [var.internet_cidr]
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      self             = false
     }
   ]
 
@@ -34,17 +23,6 @@ resource "aws_security_group" "fe_alb_sg" {
       description      = "Allow to FE port 80"
       from_port        = 80
       to_port          = 80
-      protocol         = "tcp"
-      cidr_blocks      = var.frontend_subnet_cidrs
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      self             = false
-    },
-    {
-      description      = "Allow to Admin port 82"
-      from_port        = 82
-      to_port          = 82
       protocol         = "tcp"
       cidr_blocks      = var.frontend_subnet_cidrs
       ipv6_cidr_blocks = []
@@ -85,12 +63,12 @@ resource "aws_lb_target_group" "frontend_tg" {
   health_check {
     enabled             = true
     healthy_threshold   = 3
-    interval            = 10
+    interval            = 30
     matcher             = 200
     path                = "/"
     port                = "traffic-port"
     protocol            = "HTTP"
-    timeout             = 9
+    timeout             = 10
     unhealthy_threshold = 3
   }
 
