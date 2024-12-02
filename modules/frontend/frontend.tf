@@ -166,15 +166,29 @@ EOM
 sudo systemctl restart filebeat
 
 sudo mkdir -p /var/log/nginx
-docker pull duychien1405/shopizer-fe:1.2
 
-sudo docker run -d --restart always \
--e APP_MERCHANT=DEFAULT \
--e APP_BASE_URL=http://${var.alb_be_dns}:8080 \
--p 80:80 \
--v /var/log/nginx:/var/log/nginx \
---name shopizer_shop \
-duychien1405/shopizer-fe:1.2
+mkdir -p /server/
+touch /server/docker-compose.yml
+chmod +x /server/docker-compose.yml
+
+sudo cat >> /server/docker-compose.yml <<- 'EOM'
+version: '3.8'
+
+services:
+  frontend:
+    image: ${var.image_fe_tier}
+    container_name: shopizer_shop
+    ports:
+      - "80:${var.container_port_fe_tier}"
+    restart: always
+    environment:
+      - APP_MERCHANT=DEFAULT
+      - APP_BASE_URL=http://${var.alb_be_dns}:8080
+    volumes:
+      - /var/log/nginx:/var/log/nginx
+EOM
+
+sudo docker compose -f /server/docker-compose.yml up -d
 
 # docker running
 while [ "$(sudo docker container inspect -f {{.State.Running}} shopizer_shop)" != "true" ]; do 

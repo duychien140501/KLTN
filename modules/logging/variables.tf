@@ -6,10 +6,6 @@ variable "vpc_id" {
   type = string
 }
 
-variable "logging_private_ip" {
-  type = string
-}
-
 variable "ssh_key_name" {
   type = string
 }

@@ -1,14 +1,14 @@
 # Standard Variables
+variable "env" {
+  type = string
+}
+
 variable "aws_region" {
   description = "Region for this infras"
   type        = string
 }
 
 variable "private_ip" {
-  type = string
-}
-
-variable "logging_private_ip" {
   type = string
 }
 
@@ -59,5 +59,21 @@ variable "DB_USER" {
 }
 
 variable "DB_PASS" {
+  type = string
+}
+
+variable "image_fe_tier" {
+  type = string
+}
+
+variable "container_port_fe_tier" {
+  type = string
+}
+
+variable "image_be_tier" {
+  type = string
+}
+
+variable "container_port_be_tier" {
   type = string
 }

@@ -52,3 +52,11 @@ variable "instance_type" {
 variable "logging_private_ip" {
   type = string
 }
+
+variable "image_fe_tier" {
+  type = string
+}
+
+variable "container_port_fe_tier" {
+  type = string
+}

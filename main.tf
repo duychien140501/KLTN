@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.aws_region
+  region     = var.aws_region
 }
 
 # VPC module
@@ -17,7 +17,7 @@ module "vpc" {
 
 # Waf module
 module "waf" {
-  source = "./modules/waf"
+  source     = "./modules/waf"
   fe_alb_arn = module.frontend.fe_alb_arn
 }
 
@@ -26,7 +26,6 @@ module "logging" {
   source               = "./modules/logging"
   vpc_id               = module.vpc.vpc_id
   vpc_cidr             = var.vpc_cidr
-  logging_private_ip   = var.logging_private_ip
   logging_subnet_cidrs = var.logging_subnet_cidrs
   bastion_sg_id        = module.bastion.bastion_sg_id
   ssh_key_name         = var.ssh_key_name
@@ -67,7 +66,7 @@ module "database" {
   logging_private_ip   = module.logging.logging_private_ip
   DB_USER              = var.DB_USER
   DB_PASS              = var.DB_PASS
-  
+
   depends_on = [module.vpc, module.bastion]
 }
 
@@ -86,6 +85,8 @@ module "backend" {
   backend_subnet_cidrs             = module.vpc.backend_subnet_cidrs
   cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
   logging_private_ip               = module.logging.logging_private_ip
+  image_be_tier                    = var.image_be_tier
+  container_port_be_tier           = var.container_port_be_tier
 
   depends_on = [module.vpc, module.bastion, module.database, module.cloudwatch_iam]
 
@@ -105,14 +106,16 @@ module "frontend" {
   frontend_subnet_cidrs            = module.vpc.frontend_subnet_cidrs
   cloudwatch_instance_profile_name = module.cloudwatch_iam.cloudwatch_instance_profile_name
   ssh_key_name                     = var.ssh_key_name
-  depends_on                       = [module.vpc, module.bastion, module.backend, module.cloudwatch_iam]
+  image_fe_tier                    = var.image_fe_tier
+  container_port_fe_tier           = var.container_port_fe_tier
   logging_private_ip               = module.logging.logging_private_ip
+
+  depends_on = [module.vpc, module.bastion, module.backend, module.cloudwatch_iam]
 }
 
-module "cloudwatch" {
-  source                = "./modules/cloudwatch"
+module "monitoring" {
+  source                = "./modules/monitoring"
   frontend_instance_ids = module.frontend.frontend_instance_ids
-  admin_instance_ids    = module.frontend.admin_instance_ids
   backend_instance_ids  = module.backend.backend_instance_ids
 
   depends_on = [module.frontend, module.backend]

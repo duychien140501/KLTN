@@ -109,9 +109,9 @@ resource "aws_instance" "logging_instance" {
     volume_type = "gp3"
   }
 
-  user_data = file("${path.module}/logging.sh")
-
   tags = {
     Name = "logging_instance"
   }
+
+  user_data = file("${path.module}/logging.sh")
 }

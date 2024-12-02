@@ -29,12 +29,12 @@ variable "backend_subnet_cidrs" {
 }
 
 variable "database_subnet_cidrs" {
-  description = "Subnet for frontend"
+  description = "Subnet for database"
   type        = list(string)
 }
 
 variable "logging_subnet_cidrs" {
-  description = "Subnet for logstash"
+  description = "Subnet for logging"
   type        = string
 }
 

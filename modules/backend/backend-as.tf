@@ -85,14 +85,25 @@ sudo systemctl restart filebeat
 
 # Setup backend
 mkdir -p /var/log/
-docker pull duychien1405/shopizer-server:1.1
+mkdir -p /server/
+touch /server/docker-compose.yml
+chmod +x /server/docker-compose.yml
 
-sudo docker run -d \
--p 8080:8080 \
---restart always \
--v /var/log:/opt/app/logs \
---name shopizer-server \
-duychien1405/shopizer-server:1.1
+sudo cat >> /server/docker-compose.yml <<- 'EOM'
+version: '3.8'
+
+services:
+  backend:
+    image: ${var.image_be_tier}
+    container_name: shopizer-server
+    ports:
+      - "8080:${var.container_port_be_tier}"
+    restart: always
+    volumes:
+      - /var/log:/opt/app/logs
+EOM
+
+sudo docker compose -f /server/docker-compose.yml up -d
 
 # setup cloudwatch agent
 sudo apt-get -y install collectd
@@ -240,7 +251,7 @@ resource "aws_cloudwatch_metric_alarm" "backend_high_cpu" {
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
-  period              = "60"
+  period              = "120"
   statistic           = "Average"
   threshold           = "60"
   alarm_description   = "This metric monitors high CPU utilization for backend "
