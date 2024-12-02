@@ -1,5 +1,4 @@
 resource "aws_wafv2_web_acl" "waf_fe_alb" {
-  # Cấu hình Web ACL
   name        = "waf-fe-alb"
   description = "WAFv2 Web ACL with AWS Managed Rule Groups for FE ALB"
   scope       = "REGIONAL" 
@@ -14,7 +13,6 @@ resource "aws_wafv2_web_acl" "waf_fe_alb" {
     sampled_requests_enabled   = true
   }
 
- # Thêm Managed Rule Group - AWSManagedRulesCommonRuleSet
   rule {
     name     = "AWS-Managed-CommonRuleSet"
     priority = 1
@@ -34,7 +32,6 @@ resource "aws_wafv2_web_acl" "waf_fe_alb" {
     }
   }
 
-  # Thêm Managed Rule Group - AWSManagedRulesKnownBadInputsRuleSet
   rule {
     name     = "AWS-Managed-KnownBadInputsRuleSet"
     priority = 2
@@ -54,7 +51,6 @@ resource "aws_wafv2_web_acl" "waf_fe_alb" {
     }
   }
 
-  # Thêm Managed Rule Group - AWSManagedRulesSQLiRuleSet
   rule {
     name     = "AWS-Managed-SQLiRuleSet"
     priority = 3
@@ -74,7 +70,6 @@ resource "aws_wafv2_web_acl" "waf_fe_alb" {
     }
   }
 
-  # Thêm Managed Rule Group - AWSManagedRulesLinuxRuleSet
   rule {
     name     = "AWS-Managed-LinuxRuleSet"
     priority = 4
@@ -94,7 +89,6 @@ resource "aws_wafv2_web_acl" "waf_fe_alb" {
     }
   }
 
-  # Thêm Managed Rule Group - AWSManagedRulesBotControlRuleSet
   rule {
     name     = "AWS-Managed-BotControlRuleSet"
     priority = 5

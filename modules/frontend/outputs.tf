@@ -7,11 +7,6 @@ output "frontend_instance_ids" {
   description = "List of IDs of the frontend instances"
 }
 
-output "admin_instance_ids" {
-  value       = aws_instance.admin.*.id
-  description = "List of IDs of the admin instances"
-}
-
 output "fe_alb_arn" {
   value = aws_lb.fe_alb.arn
 }

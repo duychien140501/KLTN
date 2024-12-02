@@ -33,7 +33,7 @@ sudo chmod +x .env docker-compose.yml logstash.conf logstash.yml
 
 sudo cat << 'EOF' > ./.env 
 # Password for the 'elastic' user (at least 6 characters)
-ELASTIC_PASSWORD=elastic
+ELASTIC_PASSWORD=elastic 
 
 # Password for the 'kibana_system' user (at least 6 characters)
 KIBANA_PASSWORD=kibana
@@ -106,26 +106,6 @@ output {
   if "adm-error" in [tags] {
     elasticsearch {
       index => "adm-error-%{+YYYY.MM.dd}"
-      hosts => ["https://es01:9200"]
-      user => "elastic"
-      password => "elastic"
-      ssl_enabled => true
-      cacert => "/usr/share/logstash/certs/ca/ca.crt"
-    }
-  }
-  if "adm-access" in [tags] {
-    elasticsearch {
-      index => "adm-access-%{+YYYY.MM.dd}"
-      hosts => ["https://es01:9200"]
-      user => "elastic"
-      password => "elastic"
-      ssl_enabled => true
-      cacert => "/usr/share/logstash/certs/ca/ca.crt"
-    }
-  }
-  if "admin-container" in [tags] {
-    elasticsearch {
-      index => "admin-container-%{+YYYY.MM.dd}"
       hosts => ["https://es01:9200"]
       user => "elastic"
       password => "elastic"
@@ -259,7 +239,7 @@ services:
      - certs:/usr/share/elasticsearch/config/certs
      - esdata01:/usr/share/elasticsearch/data
    ports:
-     - 9201:9200
+     - 9200:9200
    environment:
      - node.name=es01
      - cluster.name=${CLUSTER_NAME}

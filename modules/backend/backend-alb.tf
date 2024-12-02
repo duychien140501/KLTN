@@ -68,8 +68,8 @@ resource "aws_lb_target_group" "backend_tg" {
     path                = "/"
     port                = "traffic-port"
     protocol            = "HTTP"
-    timeout             = 16
-    unhealthy_threshold = 2
+    timeout             = 10
+    unhealthy_threshold = 3
   }
 
 }
