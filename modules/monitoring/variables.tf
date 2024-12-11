@@ -8,5 +8,4 @@ variable "backend_instance_ids" {
 
 variable "region" {
   type    = string
-  default = "ap-southeast-1"
 }

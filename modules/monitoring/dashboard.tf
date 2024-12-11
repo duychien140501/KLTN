@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_dashboard" "shopizer_dashboard" {
-  dashboard_name = "shopizer-dashboard"
+  dashboard_name = "shopizer-dashboard-${var.region}"
 
   dashboard_body = jsonencode({
     widgets = [

@@ -171,10 +171,10 @@ DB_PASS=${var.DB_PASS}
 TIMESTAMP=$(date +"%Y%m%d")
 
 # S3 bucket name
-S3_BUCKET="shopizer-database-backup"
+S3_BUCKET="shopizer-database-backup-${var.region}"
 
 # Dump MySQL database
-BACKUP_FILE="./shopizer-backup-$TIMESTAMP.sql"
+BACKUP_FILE="./database-backup-$TIMESTAMP.sql"
 mysqldump -u$DB_USER -p$DB_PASS SALESMANAGER > $BACKUP_FILE
 
 # Upload to S3
@@ -206,13 +206,13 @@ crontab ./cronbackupdb
 
 # Create an S3 bucket
 resource "aws_s3_bucket" "backup" {
-  bucket = "shopizer-database-backup" 
+  bucket = "shopizer-database-backup-${var.region}" 
 }
 
 # Create an IAM policy to allow writing to the S3 bucket
 resource "aws_iam_policy" "backup" {
-  name        = "DatabaseBackup"
-  description = "Allows EC2 instances to write to the backup S3 bucket"
+  name        = "DatabaseBackup-${var.region}"
+  description = "Allows EC2 instances to write to the backup S3 bucket-${var.region}"
 
   policy = <<-EOF
     {
@@ -226,8 +226,8 @@ resource "aws_iam_policy" "backup" {
             "s3:ListBucket"
           ],
           "Resource": [
-            "arn:aws:s3:::shopizer-database-backup",
-            "arn:aws:s3:::shopizer-database-backup/*"
+            "arn:aws:s3:::shopizer-database-backup-${var.region}",
+            "arn:aws:s3:::shopizer-database-backup-${var.region}/*"
           ]
         }
       ]
@@ -237,7 +237,7 @@ resource "aws_iam_policy" "backup" {
 
 # Create an IAM role for the EC2 instance
 resource "aws_iam_role" "backup" {
-  name = "DatabaseBackupRole"
+  name = "DatabaseBackupRole${var.region}"
 
   assume_role_policy = <<-EOF
   {
@@ -261,7 +261,7 @@ resource "aws_iam_role_policy_attachment" "backup" {
 
 # Create an instance profile for the EC2 instance
 resource "aws_iam_instance_profile" "backup" {
-  name = "DatabaseBackupProfile"
+  name = "DatabaseBackupProfile${var.region}"
   role = aws_iam_role.backup.name
 }
 

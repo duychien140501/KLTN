@@ -51,3 +51,7 @@ variable "DB_USER" {
 variable "DB_PASS" {
   type = string
 }
+
+variable "region" {
+  type = string
+}

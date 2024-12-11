@@ -231,6 +231,8 @@ resource "aws_autoscaling_group" "frontend" {
   max_size            = 2
   min_size            = 0
   vpc_zone_identifier = var.frontend_subnet_ids
+  target_group_arns   =  [ aws_lb_target_group.frontend_tg.arn ]
+
   launch_template {
     id      = aws_launch_template.frontend.id
     version = "$Latest"

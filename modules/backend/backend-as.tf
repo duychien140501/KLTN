@@ -215,6 +215,8 @@ resource "aws_autoscaling_group" "backend" {
   max_size            = 2
   min_size            = 0
   vpc_zone_identifier = var.backend_subnet_ids
+  target_group_arns   = [ aws_lb_target_group.backend_tg.arn ] 
+
   launch_template {
     id      = aws_launch_template.backend.id
     version = "$Latest"

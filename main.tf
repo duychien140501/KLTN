@@ -49,6 +49,7 @@ module "bastion" {
 # cloudwatch_iam_role
 module "cloudwatch_iam" {
   source = "./modules/iam-role"
+  region = var.aws_region
 }
 
 # Database module
@@ -66,6 +67,7 @@ module "database" {
   logging_private_ip   = module.logging.logging_private_ip
   DB_USER              = var.DB_USER
   DB_PASS              = var.DB_PASS
+  region               = var.aws_region
 
   depends_on = [module.vpc, module.bastion]
 }
@@ -117,6 +119,7 @@ module "monitoring" {
   source                = "./modules/monitoring"
   frontend_instance_ids = module.frontend.frontend_instance_ids
   backend_instance_ids  = module.backend.backend_instance_ids
+  region                = var.aws_region
 
   depends_on = [module.frontend, module.backend]
 }
